@@ -121,8 +121,11 @@ class Tags:
         'reset': '\x0f',
         'uncolor': '\x03',
         'bold': '\x02',
+        'monospace': '\x11',
+        'reverse': '\x16',
+        'italics': '\x1d',
+        'strikethrough': '\x1e',
         'underline': '\x1f',
-        'reverse': '\x16'
     }
 
     formats_names = list(formats.keys())
