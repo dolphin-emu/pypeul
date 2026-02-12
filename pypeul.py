@@ -31,6 +31,7 @@ import re
 import sys
 import io
 import logging
+import base64
 from collections import namedtuple, UserDict, OrderedDict
 from collections.abc import Callable
 from textwrap import wrap
@@ -635,7 +636,8 @@ class IRC:
                 try:
                     self.connect(self.host, self.port)
                     self.ident(self.myself.nick, self.myself.ident,
-                               self.myself.realname, self.myself.password)
+                               self.myself.realname, self.myself.sasl_username,
+                               self.myself.sasl_password)
                     break
                 except Exception as e:
                     logger.error('Reconnect failed: {}.'.format(e))
@@ -781,7 +783,8 @@ class IRC:
                 self.raw(prefix + ' :' + line)
 
     def ident(self, nick, ident=None,
-            realname=__version__, password=None):
+            realname=__version__, sasl_username=None,
+            sasl_password=None):
         '''Identify with nick, password and real name.
         must be called after connect()'''
 
@@ -791,10 +794,14 @@ class IRC:
         self.myself = UserMask(self, nick).user
         self.myself.ident = ident
         self.myself.realname = realname
-        self.myself.password = password
+        self.myself.sasl_username = sasl_username
+        self.myself.sasl_password = sasl_password
 
-        if password:
-            self.send('PASS', password)
+        if sasl_username and sasl_password:
+            self.myself.sasl_username = sasl_username
+            self.myself.sasl_password = sasl_password
+            logger.info('SASL authentication requested')
+            self.send('CAP', 'LS', '302')
 
         self.nick(nick)
         self.send('USER', ident, nick, nick, last=realname)
@@ -1098,6 +1105,36 @@ class IRC:
 
                     if param == 'NAMESX':
                         self.send('PROTOCTL', 'NAMESX')
+
+        elif cmd == 'CAP':
+            subcmd = params[1].upper()
+            if subcmd == 'LS':
+                if 'sasl' in params[2]:
+                    self.send('CAP', 'REQ', last='sasl')
+                else:
+                    self.send('CAP', 'END')
+            elif subcmd == 'ACK':
+                if 'sasl' in params[2]:
+                    self.send('AUTHENTICATE', 'PLAIN')
+            elif subcmd == 'NAK':
+                logger.warning('SASL capability rejected by server')
+                self.send('CAP', 'END')
+
+        elif cmd == 'AUTHENTICATE':
+            if params[0] == '+' and self.myself.sasl_username and self.myself.sasl_password:
+                auth_string = '{0}\0{0}\0{1}'.format(self.myself.sasl_username, self.myself.sasl_password)
+                encoded = base64.b64encode(auth_string.encode('utf-8')).decode('ascii')
+                self.send('AUTHENTICATE', encoded)
+            else:
+                self.send('CAP', 'END')
+
+        elif cmd == 'saslsuccess':
+            logger.info('SASL authentication successful')
+            self.send('CAP', 'END')
+
+        elif cmd == 'saslfail':
+            logger.error('SASL authentication failed')
+            self.send('CAP', 'END')
 
         elif cmd == 'banlist':
             chan = params[1]
@@ -1477,4 +1514,13 @@ numeric_events = {
     "492": "noservicehost",
     "501": "umodeunknownflag",
     "502": "usersdontmatch",
+    "900": "loggedin",
+    "901": "loggedout",
+    "902": "nicklocked",
+    "903": "saslsuccess",
+    "904": "saslfail",
+    "905": "sasltoolong",
+    "906": "saslaborted",
+    "907": "saslalready",
+    "908": "saslmechs",
 }
