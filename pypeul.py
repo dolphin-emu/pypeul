@@ -569,7 +569,8 @@ class IRC:
 
         if use_ssl:
             import ssl
-            self.sk = ssl.wrap_socket(self.sk)
+            context = ssl.create_default_context()
+            self.sk = context.wrap_socket(self.sk, server_hostname=host)
 
         self.sk.connect((host, port))
         self.sk.settimeout(512)
