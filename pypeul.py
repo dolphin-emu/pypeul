@@ -785,6 +785,11 @@ class IRC:
             for line in lines:
                 self.raw(prefix + ' :' + line)
 
+    def _send_registration(self):
+        self.nick(self.myself.nick)
+        self.send('USER', self.myself.ident, self.myself.nick, self.myself.nick,
+                  last=self.myself.realname)
+
     def ident(self, nick, ident=None,
             realname=__version__, sasl_username=None,
             sasl_password=None):
@@ -805,9 +810,8 @@ class IRC:
             self.myself.sasl_password = sasl_password
             logger.info('SASL authentication requested')
             self.send('CAP', 'LS', '302')
-
-        self.nick(nick)
-        self.send('USER', ident, nick, nick, last=realname)
+        else:
+            self._send_registration()
 
     def nick(self, nick):
         self.send('NICK', nick)
@@ -1116,12 +1120,14 @@ class IRC:
                     self.send('CAP', 'REQ', last='sasl')
                 else:
                     self.send('CAP', 'END')
+                    self._send_registration()
             elif subcmd == 'ACK':
                 if 'sasl' in params[2]:
                     self.send('AUTHENTICATE', 'PLAIN')
             elif subcmd == 'NAK':
                 logger.warning('SASL capability rejected by server')
                 self.send('CAP', 'END')
+                self._send_registration()
 
         elif cmd == 'AUTHENTICATE':
             if params[0] == '+' and self.myself.sasl_username and self.myself.sasl_password:
@@ -1130,14 +1136,17 @@ class IRC:
                 self.send('AUTHENTICATE', encoded)
             else:
                 self.send('CAP', 'END')
+                self._send_registration()
 
         elif cmd == 'saslsuccess':
             logger.info('SASL authentication successful')
             self.send('CAP', 'END')
+            self._send_registration()
 
         elif cmd == 'saslfail':
             logger.error('SASL authentication failed')
             self.send('CAP', 'END')
+            self._send_registration()
 
         elif cmd == 'banlist':
             chan = params[1]
