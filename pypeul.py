@@ -616,13 +616,16 @@ class IRC:
                 logger.exception("Exception raised while processing a message")
 
     def run(self):
-        self.run_loop()
-        self.connected = False
-        self.enabled = False
-        logger.info('Disconnected from server.')
-        self._callback('on_disconnected')
+        while True:
+            self.run_loop()
+            self.connected = False
+            self.enabled = False
+            logger.info('Disconnected from server.')
+            self._callback('on_disconnected')
 
-        if self.reconnect_obj:
+            if not self.reconnect_obj:
+                break
+
             i = 0
             while True:
                 if callable(self.reconnect_obj):
@@ -644,8 +647,6 @@ class IRC:
                     break
                 except Exception as e:
                     logger.error('Reconnect failed: {}.'.format(e))
-
-            self.run()
 
     def run_threaded(self):
         thread = threading.Thread(target=self.run)
