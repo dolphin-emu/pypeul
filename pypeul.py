@@ -566,7 +566,6 @@ class IRC:
     def connect(self, host, port=6667, use_ssl=False):
         '''Etablish a connection to a server'''
         logger.info('Connecting to %s port %d ...', host, port)
-        logger.info('hello!!!!!!')
 
         self.host = host
         self.port = port
