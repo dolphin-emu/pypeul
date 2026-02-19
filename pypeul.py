@@ -21,7 +21,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with pypeul. If not, see <http://www.gnu.org/licenses/>.
 
-__version__ = 'Pypeul python IRC client library v0.3.2 by Mick@el & Zopieux'
+__version__ = 'Pypeul python IRC client library by Mick@el & Zopieux, forked by the Dolphin Emulator Project'
 
 ENCODING = 'utf-8'
 
@@ -566,6 +566,7 @@ class IRC:
     def connect(self, host, port=6667, use_ssl=False):
         '''Etablish a connection to a server'''
         logger.info('Connecting to %s port %d ...', host, port)
+        logger.info('hello!!!!!!')
 
         self.host = host
         self.port = port
