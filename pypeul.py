@@ -584,6 +584,7 @@ class IRC:
         logger.info('Connected successfully')
         self.connected = True
         self.enabled = True
+        self.waiting_queue = []
         self._callback('on_connected')
 
     def get_raw_message(self):
