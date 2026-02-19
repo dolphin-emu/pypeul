@@ -617,8 +617,13 @@ class IRC:
                 logger.exception("Exception raised while processing a message")
 
     def run(self):
+        i = 0
         while True:
+            start_time = time.time()
             self.run_loop()
+            if time.time() - start_time > 30:
+                i = 0
+
             self.connected = False
             self.enabled = False
             logger.info('Disconnected from server.')
@@ -627,7 +632,6 @@ class IRC:
             if not self.reconnect_obj:
                 break
 
-            i = 0
             while True:
                 if callable(self.reconnect_obj):
                     t = self.reconnect_obj(i)
