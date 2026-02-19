@@ -569,6 +569,7 @@ class IRC:
 
         self.host = host
         self.port = port
+        self.use_ssl = use_ssl
         self.sk = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         if use_ssl:
@@ -640,7 +641,7 @@ class IRC:
                 i += 1
 
                 try:
-                    self.connect(self.host, self.port)
+                    self.connect(self.host, self.port, self.use_ssl)
                     self.ident(self.myself.nick, self.myself.ident,
                                self.myself.realname, self.myself.sasl_username,
                                self.myself.sasl_password)
