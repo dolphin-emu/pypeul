@@ -1044,6 +1044,9 @@ class IRC:
 
         umask = None
 
+        if text[0].startswith('@'):
+            text = text[1:]
+
         if text[0].startswith(':'):  # Prefix parsing
             prefix = text[0][1:]
             text = text[1:]
