@@ -588,13 +588,14 @@ class IRC:
         self._callback('on_connected')
 
     def get_raw_message(self):
-            try:
-                txt = self.fsock.readline()
-            except IOError:
-                return None
-            if txt == b'':
-                return None
-            return txt
+        try:
+            txt = self.fsock.readline()
+        except IOError as e:
+            logger.exception("Exception raised in get_raw_message")
+            return None
+        if txt == b'':
+            return None
+        return txt
 
     def run_loop(self):
         while self.enabled:
