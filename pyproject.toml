@@ -1,17 +1,30 @@
-[tool.poetry]
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
 name = "pypeul"
 version = "0.3.2"
 description = "A Python 3 IRC library thought for the programmer."
-authors = ["mickael9 <mickael9@gmail.com>", "zopieux <zopieux@gmail.com>"]
-license = "LGPL-3.0-or-later"
+authors = [
+    { name = "mickael9", email = "mickael9@gmail.com" },
+    { name = "zopieux", email = "zopieux@gmail.com" },
+]
+requires-python = ">=3.7,<4"
 readme = "README.md"
-repository = "https://github.com/zopieux/pypeul"
+license = "LGPL-3.0-or-later"
 keywords = ["irc"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
 
-[tool.poetry.dependencies]
-python = "^3.7"
-
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[project.urls]
+Repository = "https://github.com/zopieux/pypeul"

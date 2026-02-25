@@ -1,0 +1,8 @@
+version = 1
+revision = 3
+requires-python = ">=3.7, <4"
+
+[[package]]
+name = "pypeul"
+version = "0.3.2"
+source = { editable = "." }
