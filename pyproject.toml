@@ -5,10 +5,13 @@ build-backend = "hatchling.build"
 [project]
 name = "pypeul"
 version = "0.3.2"
-description = "A Python 3 IRC library thought for the programmer."
+description = "A fork of pypeul maintained by the Dolphin Emulator project."
 authors = [
     { name = "mickael9", email = "mickael9@gmail.com" },
     { name = "zopieux", email = "zopieux@gmail.com" },
+]
+maintainers = [
+    { name = "OatmealDome", email = "oatmeal@dolphin-emu.org" }
 ]
 requires-python = ">=3.7,<4"
 readme = "README.md"
@@ -27,4 +30,4 @@ classifiers = [
 ]
 
 [project.urls]
-Repository = "https://github.com/zopieux/pypeul"
+Repository = "https://github.com/dolphin-emu/pypeul"
